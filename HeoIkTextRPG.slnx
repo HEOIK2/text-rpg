@@ -3,5 +3,5 @@
     <Platform Name="x64" />
     <Platform Name="x86" />
   </Configurations>
-  <Project Path="HeoIkTextRPG/HeoIkTextRPG.vcxproj" />
+  <Project Path="HeoIkTextRPG/HeoIkTextRPG.vcxproj" Id="f99e030a-1f86-4aa5-ab20-1c9d68ddbd8a" />
 </Solution>
