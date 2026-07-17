@@ -3,13 +3,127 @@
 #include <string>
 using namespace std;
 
+class Player {
+protected: 
+    string name;
+    string job;
+    int level;
+    int hp;
+    int mp;
+    int power;
+    int defence;
+public:
+    Player(string name, int hp, int mp, int power, int defence) : name(name), hp(hp), mp(mp), power(power), defence(defence) {};
+    int getHP() {
+        return hp;
+    }
+    int getMP() {
+        return mp;
+    }
+    int getPower() {
+        return power;
+    }
+    int getDefence() {
+        return defence;
+    }
+    string getName() {
+        return name;
+    }
+    void setHP(int newHP) {
+        hp = newHP;
+    }
+    void setMP(int newMP) {
+        mp = newMP;
+    }
+    void setPower(int newPower) {
+        power = newPower;
+    }
+    void setDefence(int newDefence) {
+        defence = newDefence;
+    }
+    void setJob(string newJob) {
+        job = newJob;
+    }
+    void setLevel(int newLevel) {
+        level = newLevel;
+    }
+    virtual void attack() = 0;
+    virtual ~Player() {}
+};
+
+class Monster {
+
+protected:
+    string name;
+    int hp;
+    int power;
+    int defence;
+    string dropItemName;
+public:
+    Monster(string name, int hp, int power, int defence, string dropItemName) : name(name), hp(hp), power(power), defence(defence), dropItemName(dropItemName) {};
+    int getHP() {
+        return hp;
+    }
+    int getPower() {
+        return power;
+    }
+    int getDefence() {
+        return defence;
+    }
+    void setHP(int newHP) {
+        hp = newHP;
+    }
+    string getName() {
+        return name;
+    }
+    void attack(Player* player) {
+        int damage = power - player->getDefence();
+        if (damage <= 0) {
+            damage = 1;
+        }
+        player->setHP(player->getHP() - damage);
+    }
+};
+
 void printStatus(string name, int stat[]) {
     cout << "\n" << "<" << name << ">" << "\n\n";
-    cout << "체력: " << stat[0] << "\n";
-    cout << "총알: " << stat[1] << "\n";
-    cout << "명중률: " << stat[2] << "\n";
-    cout << "장갑도: " << stat[3] << "\n";
+    cout << "HP: " << stat[0] << "\n";
+    cout << "MP: " << stat[1] << "\n";
+    cout << "PWR: " << stat[2] << "\n";
+    cout << "DEF: " << stat[3] << "\n";
 }
+
+class Warrior : public Player {
+public:
+    Warrior(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
+    void attack() override {
+        cout << "***들! 죽어라! 으아아아!";
+    }
+};
+
+class Magician : public Player {
+public:
+    Magician(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
+    void attack() override {
+        cout << "마법발사! 뿅뿅뿡뿡";
+    }
+};
+
+class Thief : public Player {
+public:
+    Thief(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
+    void attack() override {
+        cout << "슈슉 슈숙. 슉. 시. ***아.";
+    }
+};
+
+class Archer : public Player {
+public:
+    Archer(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
+    void attack() override {
+        cout << "어둠에 빠진 자들을 사냥해볼까?";
+    }
+};
 
 int main()
 {
@@ -20,11 +134,11 @@ int main()
     cout << "                           [ †B lack D ead R edemti●n† ]\n";
     cout << "================================================================================\n";
 
-    cout << "\n???: 이보게 잘생긴 총잡이, 당신 이름이 뭐요?  \n";
+    cout << "\n???: 이보게 모험가, 당신 이름이 뭐요?  \n";
     cout << "나 : ";
     getline(cin, name);
 
-    cout << "\n???: 어디보자.. 체력은 어떤가? 총알은 얼마나 남았고? (두 스탯을 51-80 사이로 입력하시오.)  \n";
+    cout << "\n???: 어디보자.. HP은 어떤가? MP은 얼마나 남았고? (두 스탯을 51-80 사이로 입력하시오.)  \n";
     while (true) {
         cout << "나 : ";
         cin >> stat[0] >> stat[1];
@@ -32,7 +146,7 @@ int main()
         cout << "???: 적절치 않군... 다시 생각해보게나. \n" << "\n";
     }
 
-    cout << "\n???: 그리고... 명중률은? 장갑은 두껍고? (두 스탯을 51-80 사이로 입력하시오.)  \n";
+    cout << "\n???: 그리고... 공격력은? 방어력은 어떻고? (두 스탯을 51-80 사이로 입력하시오.)  \n";
     while (true) {
         cout << "나 : ";
         cin >> stat[2] >> stat[3];
@@ -100,6 +214,43 @@ int main()
         }
     }
 
+    Player* player = nullptr;
+    int job = 0;
+    cout << "< 직업 선택 >\n" << " 1. 전사 " << " 2. 마법사 " << " 3. 도적 " << " 4. 궁수 " << "\n\n 입력: " ;
+    cin >> job;
+    switch (job) {
+    case 1:
+        player = new Warrior(name, stat[0], stat[1], stat[2], stat[3]);
+        player->setHP(player->getHP() + 30);
+        cout << "\n* 전사로 전직하였습니다. (HP +30)\n";
+        player->attack();
+        break;
 
+    case 2:
+        player = new Magician(name, stat[0], stat[1], stat[2], stat[3]);
+        player->setMP(player->getMP() + 30);
+        cout << "\n* 마법사로 전직하였습니다. (MP +30)\n";
+        player->attack();
+        break;
+
+    case 3:
+        player = new Thief(name, stat[0], stat[1], stat[2], stat[3]);
+        player->setDefence(player->getDefence() + 30);
+        cout << "\n* 도적으로 전직하였습니다. (DEF +30)\n";
+        player->attack();
+        break;
+
+    case 4:
+        player = new Archer(name, stat[0], stat[1], stat[2], stat[3]);
+        player->setPower(player->getPower() + 30);
+        cout << "\n* 궁수로 전직하였습니다. (ATK +30)\n";
+        player->attack();
+        break;
+    }
+
+    Monster slime("슬라임", 30, 20, 10, "끈적한 점액질");
+
+    delete player;
+    
     return 0;
 }   
