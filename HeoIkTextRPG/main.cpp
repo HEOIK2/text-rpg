@@ -82,7 +82,13 @@ public:
             damage = 1;
         }
         player->setHP(player->getHP() - damage);
+        cout << name << "이 당신에게 " << damage << "의 데미지를 입혔습니다!" << endl;
     }
+        string getDropItemName() {
+            return dropItemName;
+        }
+
+    
 };
 
 void printStatus(string name, int stat[]) {
@@ -97,7 +103,7 @@ class Warrior : public Player {
 public:
     Warrior(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
     void attack() override {
-        cout << "***들! 죽어라! 으아아아!";
+        cout << "데마시아!" << endl;
     }
 };
 
@@ -105,7 +111,7 @@ class Magician : public Player {
 public:
     Magician(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
     void attack() override {
-        cout << "마법발사! 뿅뿅뿡뿡";
+        cout << "마법발사! 뿅뿅뿡뿡" << endl;
     }
 };
 
@@ -113,7 +119,7 @@ class Thief : public Player {
 public:
     Thief(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
     void attack() override {
-        cout << "슈슉 슈숙. 슉. 시. ***아.";
+        cout << "슈슉 슈숙. 슉. 시. ***아." << endl;
     }
 };
 
@@ -121,7 +127,7 @@ class Archer : public Player {
 public:
     Archer(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
     void attack() override {
-        cout << "어둠에 빠진 자들을 사냥해볼까?";
+        cout << "어둠에 빠진 자들을 사냥해볼까?" << endl;
     }
 };
 
@@ -166,7 +172,7 @@ int main()
 
 
     while (!isGameStart) {
-        cout << "< 캐릭터 강화 >\n" << " 1. HP UP " << " 2. AMMO UP " << " 3. 공격력 2배 \n" << " 4. 방어력 2배 " << " 5. 현재능력치 " << " 0. 게임 시작 \n\n" << "입력: ";
+        cout << "< 캐릭터 강화 >\n" << " 1. HP UP " << " 2. MP UP " << " 3. 공격력 2배 \n" << " 4. 방어력 2배 " << " 5. 현재능력치 " << " 0. 게임 시작 \n\n" << "입력: ";
         cin >> choice;
         cout << "\n" << "---------------------------------------------------------------------------------\n";
         switch (choice) {
@@ -249,6 +255,25 @@ int main()
     }
 
     Monster slime("슬라임", 30, 20, 10, "끈적한 점액질");
+
+    cout << "[ 전투 시작! ]    " << name << " vs " << slime.getName() << endl;
+
+    while (player->getHP() > 0 && slime.getHP() > 0) {
+        cout << " --- 플레이어의 턴 ---" << endl;
+        player->attack();
+        cout << "슬라임에게 " << player->getPower() - slime.getDefence() << " 데미지!" << endl;
+        slime.setHP(slime.getHP() - (player->getPower() - slime.getDefence()));
+        if (slime.getHP() <= 0) {
+            cout << "승리하였습니다! " << slime.getDropItemName() << "을 얻었습니다!" << endl;
+            break;
+        }
+        cout << " --- 적의 턴 ---" << endl;
+        slime.attack(player);
+
+    }
+    if (player->getHP() <= 0) {
+        cout << "패배하였습니다..." << endl;
+    }
 
     delete player;
     
