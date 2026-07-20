@@ -1,7 +1,23 @@
 ﻿
 #include <iostream>
 #include <string>
+#include <vector>
+
 using namespace std;
+
+struct Item {
+    string name;
+    int price;
+    void PrintInfo() const {
+        cout << name << " (" << price << " Gold" << ")\n";
+    }
+};
+
+struct PotionRecipe {
+    string name;
+    string ingredient1;
+    string ingredient2;
+};
 
 class Player {
 protected: 
@@ -59,8 +75,9 @@ protected:
     int power;
     int defence;
     string dropItemName;
+    int dropItemPrice;
 public:
-    Monster(string name, int hp, int power, int defence, string dropItemName) : name(name), hp(hp), power(power), defence(defence), dropItemName(dropItemName) {};
+    Monster(string name, int hp, int power, int defence, string dropItemName, int dropItemPrice) : name(name), hp(hp), power(power), defence(defence), dropItemName(dropItemName), dropItemPrice(dropItemPrice) {};
     int getHP() {
         return hp;
     }
@@ -87,7 +104,9 @@ public:
         string getDropItemName() {
             return dropItemName;
         }
-
+        int getDropItemPrice() {
+            return dropItemPrice;
+        }
     
 };
 
@@ -133,6 +152,8 @@ public:
 
 int main()
 {
+    const int MAX_INVENTORY = 10;
+    vector<Item> inventory;
     string name;
     const int SIZE = 4;
     int stat[SIZE] = { 0 }; // [0] HP, [1] AMMO, [2] ATK, [3] DEF
@@ -254,33 +275,75 @@ int main()
         break;
     }
 
-    Monster slime("슬라임", 100, 20, 10, "끈적한 점액질");
 
-    cout << "[ 전투 시작! ]    \n" << name << " vs " << slime.getName() << "\n" << endl;
+    bool isPlaying = true;
+    bool isPotion = false;
+    while (isPlaying) {
+        cout << "=== 메인 메뉴\n1.던전 입장      2. 인벤토리 확인      3. 포션 제작소      0. 게임종료\n 입력:";
+            int menu;
+            cin >> menu;
 
-    while (player->getHP() > 0 && slime.getHP() > 0) {
-        cout << " --- 플레이어의 턴 ---\n\n";
-        player->attack();
+            switch (menu) {
+            case 1: {
+                Monster slime("슬라임", 30, 20, 10, "끈적한 점액질", 50);
 
-        int damage = player->getPower() - slime.getDefence();
-        if (damage <= 0) damage = 1;
+                cout << "[ 전투 시작! ]    \n" << name << " vs " << slime.getName() << "\n" << endl;
+
+                while (player->getHP() > 0 && slime.getHP() > 0) {
+                    cout << " --- 플레이어의 턴 ---\n\n";
+                    player->attack();
+
+                    int damage = player->getPower() - slime.getDefence();
+                    if (damage <= 0) damage = 1;
 
 
-        cout << "슬라임에게 " << damage << " 데미지를 입혔습니다! \n" << endl;
+                    cout << "슬라임에게 " << damage << " 데미지를 입혔습니다! \n" << endl;
 
-        slime.setHP(slime.getHP() - damage);
+                    slime.setHP(slime.getHP() - damage);
 
-        if (slime.getHP() <= 0) {
-            cout << "승리하였습니다! \n" << slime.getDropItemName() << "을 얻었습니다!" << endl;
-            break;
-        }
-        cout << " --- 적의 턴 ---\n\n" << endl;
-        slime.attack(player);
+                    if (slime.getHP() <= 0) {
+                        cout << "승리하였습니다! \n" << slime.getDropItemName() << "을 얻었습니다!" << endl;
+                        Item jelly;
+                        jelly.name = slime.getDropItemName();
+                        jelly.price = slime.getDropItemPrice();
+                        inventory.push_back(jelly);
+                        break;
+                    }
+                    cout << " --- 적의 턴 ---\n\n" << endl;
+                    slime.attack(player);
 
+                }
+                if (player->getHP() <= 0) {
+                    cout << "패배하였습니다..." << endl;
+                }
+            }
+                break;
+
+            case 2:
+                cout << "[ 인벤토리 " << inventory.size() << " / " << MAX_INVENTORY << "]\n";
+                for (Item inventoryCheck : inventory) {
+                    inventoryCheck.PrintInfo();
+                }
+                break;
+
+            case 0:
+                isPlaying = false;
+                break;
+            case 3: vector<PotionRecipe> PotionRecipe;
+                PotionRecipe{ "HP 포션", "허브", "맑은 물" };
+                  PotionRecipe{ "스태미나 포션", "허브", "베리" };
+                  
+                break;
+
+
+                
+
+
+
+            }
     }
-    if (player->getHP() <= 0) {
-        cout << "패배하였습니다..." << endl;
-    }
+
+
 
     delete player;
     
