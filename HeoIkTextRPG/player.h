@@ -11,12 +11,17 @@ protected:
     int mp;
     int power;
     int defence;
+    int exp;
+    int maxExp;
 public:
     Player(string name, int hp, int mp, int power, int defence);
     int getHP();
     int getMP();
     int getPower();
     int getDefence();
+    int getExp();
+    int getMaxExp();
+    int getLevel();
     string getName();
     void setHP(int newHP);
     void setMP(int newMP);
@@ -24,6 +29,11 @@ public:
     void setDefence(int newDefence);
     void setJob(string newJob);
     void setLevel(int newLevel);
+    void setExp(int newExp);
+    void gainExp(int amount);
+    void printPlayerStatus();
+
+    
     virtual void attack() = 0;
     virtual ~Player() {}
 };

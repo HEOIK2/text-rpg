@@ -32,6 +32,12 @@ struct PotionRecipe {
     }
 };
 
+void setPotion(int count, int* p_HPPotion, int* p_MPPotion) {
+    *p_HPPotion = count;
+    *p_MPPotion = count;
+}
+
+
 void printStatus(string name, int stat[]) {
     cout << "\n" << "<" << name << ">" << "\n";
     cout << "HP: " << stat[0] << "\n";
@@ -42,6 +48,11 @@ void printStatus(string name, int stat[]) {
 
 int main()
 {
+
+    int H_Potion = 0;
+    int M_Potion = 0;
+
+    setPotion(5, &H_Potion, &M_Potion);
     SetConsoleOutputCP(CP_UTF8);
     SetConsoleCP(CP_UTF8);
     srand(time(0));
@@ -81,8 +92,7 @@ int main()
     printStatus(name, stat);
     cout << "---------------------------------------------------------------------------------\n\n";
 
-    int H_Potion = 5;
-    int M_Potion = 5;
+
     bool isGameStart = false;
     int choice = 0;
 
@@ -198,7 +208,7 @@ int main()
     while (isPlaying) {
         cout << "---------------------------------------------------------------------------------\n\n";
 
-        cout << "< 메인 메뉴 >\n1.사냥터 입장      2. 베낭 확인      3. 살론 주점으로      0. 게임종료\n\n";
+        cout << "< 메인 메뉴 >\n1.사냥터 입장      2. 배낭 확인      3. 살론 주점으로      4. 상태 확인      0. 게임종료\n\n";
         int menu;
         cout << "입력 : ";
         menu = getInt();
@@ -230,6 +240,7 @@ int main()
 
                 if (monsters[pick].getHP() <= 0) {
                     cout << "승리하였습니다! \n" << monsters[pick].getDropItemName() << "을 얻었습니다!" << endl;
+                    player->gainExp(30);
                     Item drop;
                     drop.name = monsters[pick].getDropItemName();
                     drop.price = monsters[pick].getDropItemPrice();
@@ -334,6 +345,7 @@ int main()
                 case 0: // 돌아가기
                     inWorkshop = false;
                     break;
+
                 }
 
                
@@ -344,6 +356,7 @@ int main()
 
 
         }
+        case 4: player->printPlayerStatus();
         }
     }
 
