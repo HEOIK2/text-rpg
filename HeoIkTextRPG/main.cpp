@@ -1,10 +1,16 @@
-﻿
+﻿#include <windows.h>
 #include <iostream>
 #include <string>
 #include <vector>
 #include <cstdlib>
 #include <ctime>
 #include <limits>
+#include "player.h"
+#include "warrior.h"
+#include "magician.h"
+#include "thief.h"
+#include "archer.h"
+#include "monster.h"
 
 using namespace std;
 
@@ -26,112 +32,6 @@ struct PotionRecipe {
     }
 };
 
-class Player {
-protected: 
-    string name;
-    string job;
-    int level;
-    int hp;
-    int mp;
-    int power;
-    int defence;
-public:
-    Player(string name, int hp, int mp, int power, int defence) : name(name), hp(hp), mp(mp), power(power), defence(defence), level(1) {};
-    int getHP() {
-        return hp;
-    }
-    int getMP() {
-        return mp;
-    }
-    int getPower() {
-        return power;
-    }
-    int getDefence() {
-        return defence;
-    }
-    string getName() {
-        return name;
-    }
-    void setHP(int newHP) {
-        hp = newHP;
-    }
-    void setMP(int newMP) {
-        mp = newMP;
-    }
-    void setPower(int newPower) {
-        power = newPower;
-    }
-    void setDefence(int newDefence) {
-        defence = newDefence;
-    }
-    void setJob(string newJob) {
-        job = newJob;
-    }
-    void setLevel(int newLevel) {
-        level = newLevel;
-    }
-    virtual void attack() = 0;
-    virtual ~Player() {}
-};
-
-class Monster {
-
-protected:
-    string name;
-    int hp;
-    int power;
-    int defence;
-    string dropItemName;
-    int dropItemPrice;
-public:
-    Monster(string name, int hp, int power, int defence, string dropItemName, int dropItemPrice) : name(name), hp(hp), power(power), defence(defence), dropItemName(dropItemName), dropItemPrice(dropItemPrice) {};
-    int getHP() {
-        return hp;
-    }
-    int getPower() {
-        return power;
-    }
-    int getDefence() {
-        return defence;
-    }
-    void setHP(int newHP) {
-        hp = newHP;
-    }
-    string getName() {
-        return name;
-    }
-    void attack(Player* player) {
-        int damage = power - player->getDefence();
-        if (damage <= 0) {
-            damage = 1;
-        }
-        player->setHP(player->getHP() - damage);
-        cout << name << "이 당신에게 " << damage << "의 데미지를 입혔습니다!\n" << endl;
-    }
-        string getDropItemName() {
-            return dropItemName;
-        }
-        int getDropItemPrice() {
-            return dropItemPrice;
-        }
-    
-};
-
-int getInt() {
-    int value;
-    while (true) {
-        cin >> value;
-        if (cin.fail()) {
-            cin.clear();
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            cout << "잘못된 입력입니다.\n";
-        }
-        else {
-            return value;
-        }
-    }  
-}
-
 void printStatus(string name, int stat[]) {
     cout << "\n" << "<" << name << ">" << "\n";
     cout << "HP: " << stat[0] << "\n";
@@ -140,40 +40,10 @@ void printStatus(string name, int stat[]) {
     cout << "DEF: " << stat[3] << "\n";
 }
 
-class Warrior : public Player {
-public:
-    Warrior(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
-    void attack() override {
-        cout << "또 보자고, 존 마스턴.\n" << endl;
-    }
-};
-
-class Magician : public Player {
-public:
-    Magician(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
-    void attack() override {
-        cout << "이 사건은 내가 맡죠.\n" << endl;
-    }
-};
-
-class Thief : public Player {
-public:
-    Thief(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
-    void attack() override {
-        cout << "Yee-haw!\n" << endl;
-    }
-};
-
-class Archer : public Player {
-public:
-    Archer(string name, int hp, int mp, int power, int defence) : Player(name, hp, mp, power, defence) {}
-    void attack() override {
-        cout << "석양이 진다...\n" << endl;
-    }
-};
-
 int main()
 {
+    SetConsoleOutputCP(CP_UTF8);
+    SetConsoleCP(CP_UTF8);
     srand(time(0));
     const int MAX_INVENTORY = 10;
     vector<Item> inventory;
