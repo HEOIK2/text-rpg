@@ -4,6 +4,7 @@
 #include <vector>
 #include <cstdlib>
 #include <ctime>
+#include <algorithm>
 #include <limits>
 #include "player.h"
 #include "warrior.h"
@@ -16,9 +17,12 @@ using namespace std;
 
 struct Item {
     string name;
-    int price;
+    int price = 0;
+    int count = 1;
+    int healHP = 0;
+    int healMP = 0;
     void PrintInfo() const {
-        cout << name << " (" << price << " Gold" << ")\n";
+        cout << name << " (" << price << " Gold" << ") " << "x" << count << "\n";
     }
 };
 
@@ -161,7 +165,8 @@ int main()
     switch (job) {
     case 1:
         player = new Warrior(name, stat[0], stat[1], stat[2], stat[3]);
-        player->setHP(player->getHP() + 30);
+        player->setMaxHP(player->getMaxHP() + 30);
+        player->setHP(player->getMaxHP());
         cout << "---------------------------------------------------------------------------------\n\n";
         cout << "* 무법자로 전직하였습니다. (HP +30)\n\n";
         cout << "---------------------------------------------------------------------------------\n\n";
@@ -170,7 +175,8 @@ int main()
 
     case 2:
         player = new Magician(name, stat[0], stat[1], stat[2], stat[3]);
-        player->setMP(player->getMP() + 30);
+        player->setMaxMP(player->getMaxMP() + 30);
+        player->setMP(player->getMaxMP());
         cout << "---------------------------------------------------------------------------------\n\n";
         cout << "* 보안관으로 전직하였습니다. (MP +30)\n\n";
         cout << "---------------------------------------------------------------------------------\n\n";
@@ -200,6 +206,22 @@ int main()
     }
     }
 
+    Item hpPotion;
+    hpPotion.name = "HP 포션";
+    hpPotion.price = 50;
+    hpPotion.count = 3;
+    hpPotion.healHP = 50;
+    hpPotion.healMP = 0;
+    inventory.push_back(hpPotion);
+
+    Item mpPotion;
+    mpPotion.name = "MP 포션";
+    mpPotion.price = 50;
+    mpPotion.count = 3;
+    mpPotion.healHP = 0;
+    mpPotion.healMP = 50;
+    inventory.push_back(mpPotion);
+
 
     bool isPlaying = true;
     while (isPlaying) {
@@ -223,9 +245,41 @@ int main()
             while (player->getHP() > 0 && monsters[pick].getHP() > 0) {
                 cout << "---------------------------------------------------------------------------------\n";
                 cout << "  *플레이어의 턴* \n";
+               
                 cout << "---------------------------------------------------------------------------------\n";
+                bool turnEnd = false;
+                while (!turnEnd) {
+                    int choice;
+                    cout << "1. 공격      2. 아이템 사용\n";
+                    cout << "입력: ";
+                    choice = getInt();
+                    switch (choice) {
+                        case 1: player->attack(&monsters[pick]);
+                            turnEnd = true;
+                        break;
 
-                player->attack(&monsters[pick]);
+                        case 2: {
+                            for (int i = 0; i < inventory.size(); i++) {
+                                cout << i + 1 << ". ";
+                                inventory[i].PrintInfo();
+                            }
+                            cout << "입력: ";
+                            int useItem = getInt();
+                            turnEnd = true;
+                            Item& item = inventory[useItem - 1];
+                            player->setHP(min(player->getHP() + item.healHP, player->getMaxHP()));
+                            player->setMP(min(player->getMP() + item.healMP, player->getMaxMP()));
+                            item.count--;
+                            if (item.count <= 0) {
+                                inventory.erase(inventory.begin() + useItem - 1);
+                            }
+                            break;
+                        }
+                        default: cout << "잘못된 입력입니다.";
+                        
+                    }
+                }
+
                 
                 if (monsters[pick].getHP() <= 0) {
                     cout << "승리하였습니다! \n" << monsters[pick].getDropItemName() << "을 얻었습니다!" << endl;
@@ -233,8 +287,18 @@ int main()
                     Item drop;
                     drop.name = monsters[pick].getDropItemName();
                     drop.price = monsters[pick].getDropItemPrice();
-                    inventory.push_back(drop);
-                    break;
+                    bool found = false;
+                    for (int i = 0; i < inventory.size(); i++) {
+                        if (inventory[i].name == drop.name) {
+                            inventory[i].count++;
+                            found = true;
+                                break;
+                        }
+                    }
+                    if (!found) {
+                        inventory.push_back(drop);
+                    }
+
                 }
                 cout << "---------------------------------------------------------------------------------\n";
                 cout << "  *적의 턴* \n";

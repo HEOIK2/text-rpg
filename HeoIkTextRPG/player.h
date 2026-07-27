@@ -15,15 +15,21 @@ protected:
     int defence;
     int exp;
     int maxExp;
+    int maxHP;
+    int maxMP;
+
 public:
     Player(string name, int hp, int mp, int power, int defence);
     int getHP();
     int getMP();
+    int getMaxHP();
+    int getMaxMP();
     int getPower();
     int getDefence();
     int getExp();
     int getMaxExp();
     int getLevel();
+
     string getName();
     void setHP(int newHP);
     void setMP(int newMP);
@@ -34,7 +40,8 @@ public:
     void setExp(int newExp);
     void gainExp(int amount);
     void printPlayerStatus();
-
+    void setMaxHP(int newMaxHP);
+    void setMaxMP(int newMaxMP);
     
     virtual void attack(Monster* monster) = 0;
     virtual ~Player() {}

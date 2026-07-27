@@ -2,13 +2,19 @@
 #include <iostream>
 using namespace std;
 
-Player::Player(string name, int hp, int mp, int power, int defence) : name(name), hp(hp), mp(mp), power(power), defence(defence), level(1), exp(0), maxExp(100) {}
+Player::Player(string name, int hp, int mp, int power, int defence) : name(name), hp(hp), mp(mp), power(power), defence(defence), level(1), exp(0), maxExp(100), maxHP(hp), maxMP(mp) {}
 
 int Player::getHP() {
 	return hp;
 }
 int Player::getMP() {
 	return mp;
+}
+int Player::getMaxHP() {
+	return maxHP;
+}
+int Player::getMaxMP() {
+	return maxMP;
 }
 int Player::getPower() {
 	return power;
@@ -34,6 +40,12 @@ void Player::setHP(int newHP) {
 void Player::setMP(int newMP) {
 	mp = newMP;
 }
+void Player::setMaxHP(int newMaxHP) {
+	maxHP = newMaxHP;
+}
+void Player::setMaxMP(int newMaxMP) {
+	maxMP = newMaxMP;
+}
 void Player::setPower(int newPower) {
 	power = newPower;
 }
@@ -55,20 +67,21 @@ void Player::gainExp(int amount) {
 		int prelevel = level;
 		level += 1;
 		exp = 0;
-		hp += 10;
-		mp += 5;
+		maxHP += 10;
+		maxMP += 5;
 		power += 5;
 		maxExp += 50;
+		hp = maxHP;
 		cout << "레벨 업! Lv." << prelevel << "->" << "Lv." << level << "\n";
-		cout << "HP +10, MP +5, 공격력 +5 증가!";
+		cout << "최대HP +10, 최대MP +5, 공격력 +5 증가!";
 	}
 }
 void Player::printPlayerStatus() {
 	cout << "\n" << "<" << name << ">" << "\n";
 	cout << "Level: " << level << "\n";
 	cout << "EXP: " << exp << " / " << maxExp << "\n";
-	cout << "HP: " << hp << "\n";
-	cout << "MP: " << mp << "\n";
+	cout << "HP: " << hp << " / " << maxHP << "\n";
+	cout << "MP: " << mp << " / " << maxMP << "\n";
 	cout << "PWR: " << power << "\n";
 	cout << "DEF: " << defence << "\n";
 }
