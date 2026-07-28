@@ -6,13 +6,13 @@
 #include <ctime>
 #include <algorithm>
 #include <limits>
+#include <map>
 #include "player.h"
 #include "warrior.h"
 #include "magician.h"
 #include "thief.h"
 #include "archer.h"
 #include "monster.h"
-
 using namespace std;
 
 struct Item {
@@ -63,6 +63,8 @@ int main()
     const int MAX_INVENTORY = 10;
     vector<Item> inventory;
     vector<PotionRecipe> recipeList;
+    map<string, int> potionStock_;
+    const int MAX_STOCK = 3;
     string name;
     const int SIZE = 4;
     int stat[SIZE] = { 0 }; // [0] HP, [1] AMMO, [2] ATK, [3] DEF
@@ -222,6 +224,19 @@ int main()
     mpPotion.healMP = 50;
     inventory.push_back(mpPotion);
 
+    PotionRecipe HPPR;
+    HPPR.name = "위스키(샷)";
+    HPPR.ingredient1 = "버팔로트레이스";
+    HPPR.ingredient2 = "얼음";
+    recipeList.push_back(HPPR);
+    potionStock_[HPPR.name] = 3;
+
+    PotionRecipe STPR;
+    STPR.name = "라거(파인트)";
+    STPR.ingredient1 = "버드와이저";
+    STPR.ingredient2 = "얼음";
+    recipeList.push_back(STPR);
+    potionStock_[STPR.name] = 3;
 
     bool isPlaying = true;
     while (isPlaying) {
@@ -236,8 +251,8 @@ int main()
         case 1: {
             Monster monsters[3]{
                 Monster("회전초", 30, 20, 10, "나뭇가지", 50),
-                Monster("들소", 60, 40, 20, "소머리", 100),
-                Monster("마피아", 90, 60, 30, "총알구멍 난 중절모", 150)
+                Monster("들소", 40, 30, 15, "소머리", 100),
+                Monster("마피아", 50, 40, 20, "총알구멍 난 중절모", 150)
             };
             int pick = rand() % 3;
             cout << "\n[ 전투 시작! ]    \n" << name << " vs " << monsters[pick].getName() << "\n" << endl;
@@ -328,23 +343,12 @@ int main()
             break;
 
         case 3: {
-            PotionRecipe HPPR;
-            HPPR.name = "위스키(샷)";
-            HPPR.ingredient1 = "버팔로트레이스";
-            HPPR.ingredient2 = "얼음";
-            recipeList.push_back(HPPR);
-
-            PotionRecipe STPR;
-            STPR.name = "라거(파인트)";
-            STPR.ingredient1 = "버드와이저";
-            STPR.ingredient2 = "얼음";
-            recipeList.push_back(STPR);
 
             bool inWorkshop = true;
             while (inWorkshop) {
                 int potionMenu;
                 cout << "---------------------------------------------------------------------------------\n";
-                cout << " 살론 주점 \n 1. 전체 레시피 \n 2. 메뉴 이름으로 찾기\n 3. 재료로 찾기\n 0. 돌아가기\n";
+                cout << " 살론 주점 \n 1. 전체 레시피 \n 2. 메뉴 이름으로 찾기\n 3. 재료로 찾기\n 4. 주문하기\n 5. 공병 반환\n 0. 돌아가기\n";
                 cout << "---------------------------------------------------------------------------------\n";
 
                 cout << "입력 : ";
@@ -398,7 +402,33 @@ int main()
                 case 0: // 돌아가기
                     inWorkshop = false;
                     break;
-
+                case 4: {   // 주문하기
+                    string keyword;
+                    cout << "주문할 메뉴: ";
+                    cin >> keyword;
+                    if (potionStock_[keyword] > 0) {
+                        potionStock_[keyword]--;
+                        cout << keyword << " 지급 (재고: " << potionStock_[keyword] << ")\n";
+                    }
+                    else {
+                        cout << "재고 없음\n";
+                    }
+                    break;
+                }
+                case 5: {   // 공병 반환
+                    string keyword;
+                    cout << "반환할 공병: ";
+                    cin >> keyword;
+                    if (potionStock_[keyword] < MAX_STOCK) {
+                        potionStock_[keyword]++;
+                        cout << keyword << " 공병 반환 (재고: " << potionStock_[keyword] << ")\n";
+                    }
+                    else {
+                        cout << "재고가 가득 찼습니다.\n";
+                    }
+                    break;
+                }
+                
                 }
 
                
@@ -407,9 +437,10 @@ int main()
 
 
 
-
+            break;
         }
         case 4: player->printPlayerStatus();
+            break;
         }
     }
 
